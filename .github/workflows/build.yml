@@ -1,0 +1,20 @@
+name: Build Invest (Windows)
+on:
+  push:
+    branches: [ "**" ]
+  workflow_dispatch: {}
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - run: dotnet restore
+      - run: dotnet test --configuration Release --no-restore
+      - run: dotnet publish src/Invest.App/Invest.App.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Invest-Windows
+          path: publish/Invest.exe
