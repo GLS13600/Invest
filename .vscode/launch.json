@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Lancer Invest (WPF)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Invest.App/bin/Debug/net8.0-windows/Invest.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/Invest.App",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        }
+    ]
+}

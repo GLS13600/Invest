@@ -1,0 +1,53 @@
+<UserControl x:Class="Invest.App.Views.BudgetView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel>
+        <TextBlock Text="Budget mensuel" Style="{StaticResource H2}" FontSize="26" Margin="0,0,0,18" />
+
+        <!-- Synthèse -->
+        <UniformGrid Columns="4" Margin="0,0,0,18">
+            <Border Style="{StaticResource Card}" Margin="0,0,9,0">
+                <StackPanel>
+                    <TextBlock Text="Revenus" Style="{StaticResource Muted}" />
+                    <TextBlock Style="{StaticResource H2}" Margin="0,6,0,0" Foreground="{StaticResource GreenBrush}"
+                               Text="{Binding TotalIncome, Converter={StaticResource Currency}}" />
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource Card}" Margin="9,0,9,0">
+                <StackPanel>
+                    <TextBlock Text="Dépenses" Style="{StaticResource Muted}" />
+                    <TextBlock Style="{StaticResource H2}" Margin="0,6,0,0" Foreground="{StaticResource RedBrush}"
+                               Text="{Binding TotalExpenses, Converter={StaticResource Currency}}" />
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource Card}" Margin="9,0,9,0">
+                <StackPanel>
+                    <TextBlock Text="Épargne totale" Style="{StaticResource Muted}" />
+                    <TextBlock Style="{StaticResource H2}" Margin="0,6,0,0"
+                               Text="{Binding TotalSavings, Converter={StaticResource Currency}}" />
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource Card}" Margin="9,0,0,0">
+                <StackPanel>
+                    <TextBlock Text="Capacité d'invest. / mois" Style="{StaticResource Muted}" />
+                    <TextBlock Style="{StaticResource H2}" Margin="0,6,0,0" Foreground="{StaticResource AccentBrush}"
+                               Text="{Binding CapacityForInvesting, Converter={StaticResource Currency}}" />
+                </StackPanel>
+            </Border>
+        </UniformGrid>
+
+        <!-- Détail par mois -->
+        <Border Style="{StaticResource Card}">
+            <DataGrid ItemsSource="{Binding Months}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Mois" Binding="{Binding Month}" Width="*" />
+                    <DataGridTextColumn Header="Revenus" Binding="{Binding Income, StringFormat=N2}" Width="*" />
+                    <DataGridTextColumn Header="Dépenses" Binding="{Binding Expenses, StringFormat=N2}" Width="*" />
+                    <DataGridTextColumn Header="Épargne" Binding="{Binding Savings, StringFormat=N2}" Width="*" />
+                    <DataGridTextColumn Header="Net" Binding="{Binding Net, StringFormat=N2}" Width="*" />
+                    <DataGridTextColumn Header="Solde reporté" Binding="{Binding RunningBalance, StringFormat=N2}" Width="*" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+    </StackPanel>
+</UserControl>

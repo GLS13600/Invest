@@ -1,0 +1,82 @@
+<UserControl x:Class="Invest.App.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctrl="clr-namespace:Invest.App.Controls">
+    <StackPanel>
+
+        <!-- En-tête : Net Worth + variation -->
+        <Grid Margin="0,0,0,24">
+            <StackPanel>
+                <TextBlock Text="PATRIMOINE NET" Style="{StaticResource Muted}"
+                           FontWeight="SemiBold" Opacity="0.8" />
+                <TextBlock Style="{StaticResource H1}"
+                           Text="{Binding NetWorth, Converter={StaticResource Currency}}" />
+                <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                    <TextBlock FontSize="16" FontWeight="SemiBold"
+                               Foreground="{Binding LatentGain, Converter={StaticResource SignToBrush}}"
+                               Text="{Binding LatentGain, Converter={StaticResource SignedCurrency}}" />
+                    <TextBlock FontSize="16" FontWeight="SemiBold" Margin="10,0,0,0"
+                               Foreground="{Binding LatentGain, Converter={StaticResource SignToBrush}}"
+                               Text="{Binding GainPercent, Converter={StaticResource Percent}}" />
+                </StackPanel>
+            </StackPanel>
+            <Button Content="↻  Actualiser les prix" Style="{StaticResource AccentButton}"
+                    HorizontalAlignment="Right" VerticalAlignment="Top"
+                    Command="{Binding RefreshPricesCommand}" />
+        </Grid>
+
+        <!-- Courbe de performance -->
+        <Border Style="{StaticResource Card}" Height="280" Margin="0,0,0,18">
+            <Grid>
+                <TextBlock Text="Évolution du portefeuille" Style="{StaticResource H2}"
+                           VerticalAlignment="Top" />
+                <ctrl:AreaChart Values="{Binding Series}" Margin="0,40,0,0" />
+            </Grid>
+        </Border>
+
+        <!-- Cartes KPI -->
+        <UniformGrid Columns="3" Margin="0,0,0,18">
+            <Border Style="{StaticResource Card}" Margin="0,0,9,0">
+                <StackPanel>
+                    <TextBlock Text="Total investi" Style="{StaticResource Muted}" />
+                    <TextBlock Style="{StaticResource H2}" FontSize="26" Margin="0,6,0,0"
+                               Text="{Binding Invested, Converter={StaticResource Currency}}" />
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource Card}" Margin="9,0,9,0">
+                <StackPanel>
+                    <TextBlock Text="Plus-value latente" Style="{StaticResource Muted}" />
+                    <TextBlock Style="{StaticResource H2}" FontSize="26" Margin="0,6,0,0"
+                               Foreground="{Binding LatentGain, Converter={StaticResource SignToBrush}}"
+                               Text="{Binding LatentGain, Converter={StaticResource SignedCurrency}}" />
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource Card}" Margin="9,0,0,0">
+                <StackPanel>
+                    <TextBlock Text="Plus-value nette" Style="{StaticResource Muted}" />
+                    <TextBlock Style="{StaticResource H2}" FontSize="26" Margin="0,6,0,2"
+                               Foreground="{Binding NetGainAfterTax, Converter={StaticResource SignToBrush}}"
+                               Text="{Binding NetGainAfterTax, Converter={StaticResource SignedCurrency}}" />
+                    <TextBlock Text="{Binding TaxNote}" Style="{StaticResource Muted}" FontSize="11" />
+                </StackPanel>
+            </Border>
+        </UniformGrid>
+
+        <!-- Répartition -->
+        <Border Style="{StaticResource Card}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ctrl:DonutChart Grid.Column="0" Slices="{Binding Allocation}" Width="170" Height="170" />
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="24,0,0,0">
+                    <TextBlock Text="Répartition des actifs" Style="{StaticResource H2}" Margin="0,0,0,10" />
+                    <TextBlock Text="{Binding AllocationLegend}" Style="{StaticResource Muted}"
+                               FontSize="14" TextWrapping="Wrap" LineHeight="24" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+    </StackPanel>
+</UserControl>

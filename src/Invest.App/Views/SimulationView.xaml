@@ -1,0 +1,84 @@
+<UserControl x:Class="Invest.App.Views.SimulationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctrl="clr-namespace:Invest.App.Controls">
+    <StackPanel>
+        <Grid Margin="0,0,0,18">
+            <TextBlock Text="Mode Simulation" Style="{StaticResource H2}" FontSize="26" />
+            <Button Content="🔄  Synchroniser avec le Réel" Style="{StaticResource AccentButton}"
+                    HorizontalAlignment="Right" Command="{Binding SyncWithRealCommand}" />
+        </Grid>
+
+        <!-- Résultat projeté -->
+        <StackPanel Margin="0,0,0,4">
+            <TextBlock Text="VALEUR PROJETÉE" Style="{StaticResource Muted}" FontWeight="SemiBold" />
+            <TextBlock Style="{StaticResource H1}" FontSize="46"
+                       Text="{Binding FinalValue, Converter={StaticResource Currency}}" />
+        </StackPanel>
+
+        <!-- Courbe -->
+        <Border Style="{StaticResource Card}" Height="260" Margin="0,12,0,18">
+            <ctrl:AreaChart Values="{Binding Series}" LineColor="#7C5CFC" />
+        </Border>
+
+        <!-- Sliders -->
+        <Border Style="{StaticResource Card}" Margin="0,0,0,18">
+            <StackPanel>
+                <DockPanel Margin="0,0,0,4">
+                    <TextBlock Text="Croissance mensuelle" Style="{StaticResource Muted}" />
+                    <TextBlock DockPanel.Dock="Right" FontWeight="SemiBold"
+                               Text="{Binding MonthlyGrowthPercent, StringFormat={}{0:N1} %}" />
+                </DockPanel>
+                <Slider Minimum="0" Maximum="30" Value="{Binding MonthlyGrowthPercent}"
+                        TickFrequency="1" IsSnapToTickEnabled="False" Margin="0,0,0,18" />
+
+                <DockPanel Margin="0,0,0,4">
+                    <TextBlock Text="Apport mensuel (€)" Style="{StaticResource Muted}" />
+                    <TextBlock DockPanel.Dock="Right" FontWeight="SemiBold"
+                               Text="{Binding MonthlyContribution, StringFormat={}{0:N0} €}" />
+                </DockPanel>
+                <Slider Minimum="0" Maximum="2000" Value="{Binding MonthlyContribution}"
+                        TickFrequency="50" Margin="0,0,0,18" />
+
+                <DockPanel Margin="0,0,0,4">
+                    <TextBlock Text="Horizon (mois)" Style="{StaticResource Muted}" />
+                    <TextBlock DockPanel.Dock="Right" FontWeight="SemiBold"
+                               Text="{Binding Months, StringFormat={}{0} mois}" />
+                </DockPanel>
+                <Slider Minimum="6" Maximum="240" Value="{Binding Months}" TickFrequency="6" />
+            </StackPanel>
+        </Border>
+
+        <!-- KPI simulation -->
+        <UniformGrid Columns="4">
+            <Border Style="{StaticResource Card}" Margin="0,0,9,0">
+                <StackPanel>
+                    <TextBlock Text="Départ" Style="{StaticResource Muted}" />
+                    <TextBlock Style="{StaticResource H2}" Margin="0,6,0,0"
+                               Text="{Binding StartingValue, Converter={StaticResource Currency}}" />
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource Card}" Margin="9,0,9,0">
+                <StackPanel>
+                    <TextBlock Text="Total investi" Style="{StaticResource Muted}" />
+                    <TextBlock Style="{StaticResource H2}" Margin="0,6,0,0"
+                               Text="{Binding TotalInvested, Converter={StaticResource Currency}}" />
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource Card}" Margin="9,0,9,0">
+                <StackPanel>
+                    <TextBlock Text="Gain projeté" Style="{StaticResource Muted}" />
+                    <TextBlock Style="{StaticResource H2}" Margin="0,6,0,0" Foreground="{StaticResource GreenBrush}"
+                               Text="{Binding ProjectedGain, Converter={StaticResource SignedCurrency}}" />
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource Card}" Margin="9,0,0,0">
+                <StackPanel>
+                    <TextBlock Text="Équiv. annuel" Style="{StaticResource Muted}" />
+                    <TextBlock Style="{StaticResource H2}" Margin="0,6,0,0"
+                               Text="{Binding AnnualizedPercent, Converter={StaticResource Percent}}" />
+                </StackPanel>
+            </Border>
+        </UniformGrid>
+    </StackPanel>
+</UserControl>

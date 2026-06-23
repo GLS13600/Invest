@@ -1,0 +1,97 @@
+<UserControl x:Class="Invest.App.Views.ReelView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel>
+        <TextBlock Text="Mode Réel" Style="{StaticResource H2}" FontSize="26" Margin="0,0,0,18" />
+
+        <!-- Formulaire d'ajout -->
+        <Border Style="{StaticResource Card}" Margin="0,0,0,18">
+            <StackPanel>
+                <TextBlock Text="Ajouter une transaction" Style="{StaticResource Muted}"
+                           FontWeight="SemiBold" Margin="0,0,0,12" />
+                <WrapPanel>
+                    <StackPanel Margin="0,0,14,0">
+                        <TextBlock Text="Date" Style="{StaticResource Muted}" FontSize="11" />
+                        <DatePicker SelectedDate="{Binding NewDate}" Width="130" />
+                    </StackPanel>
+                    <StackPanel Margin="0,0,14,0">
+                        <TextBlock Text="Actif" Style="{StaticResource Muted}" FontSize="11" />
+                        <ComboBox Width="200" ItemsSource="{Binding Assets}" DisplayMemberPath="Name"
+                                  SelectedItem="{Binding NewAsset}" />
+                    </StackPanel>
+                    <StackPanel Margin="0,0,14,0">
+                        <TextBlock Text="Compte" Style="{StaticResource Muted}" FontSize="11" />
+                        <ComboBox Width="150" ItemsSource="{Binding Accounts}" DisplayMemberPath="Name"
+                                  SelectedItem="{Binding NewAccount}" />
+                    </StackPanel>
+                    <StackPanel Margin="0,0,14,0">
+                        <TextBlock Text="Sens" Style="{StaticResource Muted}" FontSize="11" />
+                        <ComboBox Width="110" ItemsSource="{Binding Sides}" SelectedItem="{Binding NewSide}" />
+                    </StackPanel>
+                    <StackPanel Margin="0,0,14,0">
+                        <TextBlock Text="Prix" Style="{StaticResource Muted}" FontSize="11" />
+                        <TextBox Width="90" Text="{Binding NewPrice, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                    <StackPanel Margin="0,0,14,0">
+                        <TextBlock Text="Quantité" Style="{StaticResource Muted}" FontSize="11" />
+                        <TextBox Width="90" Text="{Binding NewQuantity, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                    <StackPanel Margin="0,0,14,0">
+                        <TextBlock Text="Frais" Style="{StaticResource Muted}" FontSize="11" />
+                        <TextBox Width="80" Text="{Binding NewFees, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                    <Button Content="+ Ajouter" Style="{StaticResource AccentButton}"
+                            VerticalAlignment="Bottom" Command="{Binding AddTransactionCommand}" />
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- Positions -->
+        <Border Style="{StaticResource Card}" Margin="0,0,0,18">
+            <StackPanel>
+                <TextBlock Text="Mes positions" Style="{StaticResource Muted}" FontWeight="SemiBold"
+                           Margin="0,0,0,8" />
+                <DataGrid ItemsSource="{Binding Holdings}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Actif" Binding="{Binding Asset.Name}" Width="2*" />
+                        <DataGridTextColumn Header="Qté" Binding="{Binding Quantity, StringFormat=N4}" Width="*" />
+                        <DataGridTextColumn Header="PRU" Binding="{Binding AveragePrice, StringFormat=N2}" Width="*" />
+                        <DataGridTextColumn Header="Prix live" Binding="{Binding CurrentPrice, StringFormat=N2}" Width="*" />
+                        <DataGridTextColumn Header="Valeur" Binding="{Binding MarketValue, StringFormat=N2}" Width="*" />
+                        <DataGridTextColumn Header="+/- Value" Binding="{Binding Gain, StringFormat=+0.00;-0.00}" Width="*" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </Border>
+
+        <!-- Journal -->
+        <Border Style="{StaticResource Card}">
+            <StackPanel>
+                <TextBlock Text="Historique des transactions" Style="{StaticResource Muted}"
+                           FontWeight="SemiBold" Margin="0,0,0,8" />
+                <DataGrid ItemsSource="{Binding Transactions}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Date" Binding="{Binding Date, StringFormat=dd/MM/yyyy}" Width="*" />
+                        <DataGridTextColumn Header="Actif" Binding="{Binding Asset.Name}" Width="2*" />
+                        <DataGridTextColumn Header="Compte" Binding="{Binding Account.Name}" Width="*" />
+                        <DataGridTextColumn Header="Sens" Binding="{Binding Side}" Width="*" />
+                        <DataGridTextColumn Header="Prix" Binding="{Binding Price, StringFormat=N2}" Width="*" />
+                        <DataGridTextColumn Header="Qté" Binding="{Binding Quantity, StringFormat=N4}" Width="*" />
+                        <DataGridTextColumn Header="Investi" Binding="{Binding InvestedValue, StringFormat=N2}" Width="*" />
+                        <DataGridTemplateColumn Header="" Width="60">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="✕" Background="Transparent" BorderThickness="0"
+                                            Foreground="{StaticResource RedBrush}" Cursor="Hand"
+                                            Command="{Binding DataContext.DeleteTransactionCommand,
+                                                      RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>

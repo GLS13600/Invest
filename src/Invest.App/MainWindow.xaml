@@ -1,0 +1,51 @@
+<Window x:Class="Invest.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Invest" Height="860" Width="1320"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource BgBrush}"
+        FontFamily="Segoe UI Variable, Segoe UI">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="240" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- ============ SIDEBAR ============ -->
+        <Border Grid.Column="0" Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource StrokeBrush}" BorderThickness="0,0,1,0">
+            <DockPanel LastChildFill="True">
+                <StackPanel DockPanel.Dock="Top" Margin="22,26,22,30" Orientation="Horizontal">
+                    <Border Width="34" Height="34" CornerRadius="9" Background="{StaticResource AccentBrush}">
+                        <TextBlock Text="◈" Foreground="White" FontSize="18"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <TextBlock Text="Invest" FontSize="22" FontWeight="Bold" Margin="12,0,0,0"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Top">
+                    <RadioButton Style="{StaticResource NavButton}" GroupName="nav" Content="📊  Dashboard"
+                                 IsChecked="True"
+                                 Command="{Binding NavigateCommand}" CommandParameter="Dashboard" />
+                    <RadioButton Style="{StaticResource NavButton}" GroupName="nav" Content="💼  Réel"
+                                 Command="{Binding NavigateCommand}" CommandParameter="Reel" />
+                    <RadioButton Style="{StaticResource NavButton}" GroupName="nav" Content="🚀  Simulation"
+                                 Command="{Binding NavigateCommand}" CommandParameter="Simulation" />
+                    <RadioButton Style="{StaticResource NavButton}" GroupName="nav" Content="🛡️  PEA"
+                                 Command="{Binding NavigateCommand}" CommandParameter="Pea" />
+                    <RadioButton Style="{StaticResource NavButton}" GroupName="nav" Content="📅  Budget"
+                                 Command="{Binding NavigateCommand}" CommandParameter="Budget" />
+                </StackPanel>
+
+                <TextBlock DockPanel.Dock="Bottom" Style="{StaticResource Muted}" Margin="22,0,22,18"
+                           Text="Données locales · SQLite" />
+            </DockPanel>
+        </Border>
+
+        <!-- ============ CONTENU ============ -->
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" Padding="32,28">
+            <ContentControl Content="{Binding Current}" />
+        </ScrollViewer>
+    </Grid>
+</Window>
