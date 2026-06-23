@@ -20,8 +20,8 @@ public static class DbInitializer
 
         var exail = new Asset { Name = "Exail Technologies", Ticker = "EXA.PA", Class = AssetClass.Action, Country = "France", LastPrice = 126.40m };
         var arcelor = new Asset { Name = "ArcelorMittal", Ticker = "MT.AS", Class = AssetClass.Action, Country = "Luxembourg", LastPrice = 60.64m };
-        var sp500 = new Asset { Name = "BNPP Easy S&P 500 ETF", Ticker = "ESE.PA", Class = AssetClass.ETF, Country = "US", LastPrice = 32.95m };
-        var world = new Asset { Name = "Amundi PEA MSCI World", Ticker = "CW8.PA", Class = AssetClass.ETF, Country = "Monde", LastPrice = 5.99m };
+        var sp500 = new Asset { Name = "BNPP Easy S&P 500 ETF", Ticker = "ESE.PA", Class = AssetClass.ETF, Country = "US", LastPrice = 32.955m };
+        var world = new Asset { Name = "Amundi PEA MSCI World", Ticker = "CW8.PA", Class = AssetClass.ETF, Country = "Monde", LastPrice = 5.991m };
         db.Assets.AddRange(exail, arcelor, sp500, world);
 
         db.SaveChanges();
