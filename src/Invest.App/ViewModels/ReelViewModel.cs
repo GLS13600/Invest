@@ -27,6 +27,8 @@ public partial class ReelViewModel : ObservableObject, ILoadable
     [ObservableProperty] private decimal _newPrice;
     [ObservableProperty] private decimal _newQuantity;
     [ObservableProperty] private decimal _newFees;
+    [ObservableProperty] private bool _isBusy;
+    [ObservableProperty] private string _status = "";
 
     public ReelViewModel(PortfolioService service) => _service = service;
 
@@ -79,8 +81,51 @@ public partial class ReelViewModel : ObservableObject, ILoadable
         await LoadAsync();
     }
 
+    /// <summary>Renseigne le prix avec le cours historique de l'actif à la date choisie.</summary>
+    [RelayCommand]
+    private async Task FetchPriceForDate()
+    {
+        if (NewAsset is null) return;
+        IsBusy = true;
+        Status = "Récupération du cours…";
+        try
+        {
+            var price = await _service.GetHistoricalPriceAsync(NewAsset.Id, NewDate);
+            if (price is > 0)
+            {
+                NewPrice = decimal.Round(price.Value, 4);
+                Status = $"Cours du {NewDate:dd/MM/yyyy} : {NewPrice:N2}";
+            }
+            else
+            {
+                Status = "Cours indisponible pour cette date — saisis le prix manuellement.";
+            }
+        }
+        finally { IsBusy = false; }
+    }
+
+    /// <summary>Met à jour tous les ordres existants au cours historique de leur date d'achat.</summary>
+    [RelayCommand]
+    private async Task UpdateOrderPrices()
+    {
+        IsBusy = true;
+        Status = "Mise à jour des prix d'achat…";
+        try
+        {
+            int n = await _service.UpdateOrderPricesFromDateAsync();
+            Status = n > 0 ? $"{n} ordre(s) mis à jour." : "Aucun prix mis à jour (réseau ?).";
+            await LoadAsync();
+        }
+        finally { IsBusy = false; }
+    }
+
     // Réévalue l'état du bouton "Ajouter" quand le formulaire change.
-    partial void OnNewAssetChanged(Asset? value) => AddTransactionCommand.NotifyCanExecuteChanged();
+    partial void OnNewAssetChanged(Asset? value)
+    {
+        AddTransactionCommand.NotifyCanExecuteChanged();
+        _ = FetchPriceForDate(); // remplissage auto du prix à la sélection de l'actif
+    }
+    partial void OnNewDateChanged(DateTime value) => _ = FetchPriceForDate();
     partial void OnNewAccountChanged(Account? value) => AddTransactionCommand.NotifyCanExecuteChanged();
     partial void OnNewPriceChanged(decimal value) => AddTransactionCommand.NotifyCanExecuteChanged();
     partial void OnNewQuantityChanged(decimal value) => AddTransactionCommand.NotifyCanExecuteChanged();

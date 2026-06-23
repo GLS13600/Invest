@@ -54,6 +54,41 @@ public class YahooPriceProvider : IPriceProvider
         }
     }
 
+    public async Task<decimal?> GetHistoricalCloseAsync(string ticker, DateTime date, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(ticker)) return null;
+
+        try
+        {
+            // Fenêtre autour de la date : on récupère ~7 jours avant pour couvrir week-ends/fériés.
+            var from = new DateTimeOffset(date.Date.AddDays(-7)).ToUnixTimeSeconds();
+            var to = new DateTimeOffset(date.Date.AddDays(1)).ToUnixTimeSeconds();
+            var url = $"{BaseUrl}{Uri.EscapeDataString(ticker)}?period1={from}&period2={to}&interval=1d";
+
+            using var doc = await _http.GetFromJsonAsync<JsonDocument>(url, ct);
+            if (doc is null) return null;
+
+            var result = doc.RootElement.GetProperty("chart").GetProperty("result")[0];
+            var timestamps = result.GetProperty("timestamp").EnumerateArray()
+                .Select(t => t.GetInt64()).ToList();
+            var closes = result.GetProperty("indicators").GetProperty("quote")[0]
+                .GetProperty("close").EnumerateArray().ToList();
+
+            // On prend le dernier jour de bourse dont la date est <= date demandée.
+            long target = new DateTimeOffset(date.Date.AddDays(1)).ToUnixTimeSeconds();
+            for (int i = timestamps.Count - 1; i >= 0; i--)
+            {
+                if (timestamps[i] < target && closes[i].ValueKind == JsonValueKind.Number)
+                    return closes[i].GetDecimal();
+            }
+            return null;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     public async Task<IReadOnlyList<Quote>> GetQuotesAsync(IEnumerable<string> tickers, CancellationToken ct = default)
     {
         var tasks = tickers

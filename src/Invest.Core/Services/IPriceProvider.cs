@@ -11,4 +11,10 @@ public interface IPriceProvider
 
     /// <summary>Récupère plusieurs cotations en une fois.</summary>
     Task<IReadOnlyList<Quote>> GetQuotesAsync(IEnumerable<string> tickers, CancellationToken ct = default);
+
+    /// <summary>
+    /// Cours de clôture historique d'un symbole à une date donnée (ou au dernier jour
+    /// de bourse précédent si la date tombe un week-end / jour férié). Null si indisponible.
+    /// </summary>
+    Task<decimal?> GetHistoricalCloseAsync(string ticker, DateTime date, CancellationToken ct = default);
 }

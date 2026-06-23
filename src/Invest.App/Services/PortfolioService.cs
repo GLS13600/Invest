@@ -144,6 +144,41 @@ public class PortfolioService
         db.SaveChanges();
     }
 
+    /// <summary>Cours de clôture historique d'un actif à une date (pour pré-remplir un ordre).</summary>
+    public async Task<decimal?> GetHistoricalPriceAsync(int assetId, DateTime date, CancellationToken ct = default)
+    {
+        string? ticker;
+        using (var db = _dbFactory.CreateDbContext())
+            ticker = db.Assets.Where(a => a.Id == assetId).Select(a => a.Ticker).FirstOrDefault();
+
+        if (string.IsNullOrWhiteSpace(ticker)) return null;
+        return await _prices.GetHistoricalCloseAsync(ticker, date, ct);
+    }
+
+    /// <summary>
+    /// Met à jour le prix de chaque transaction avec le cours historique de sa date d'achat.
+    /// Renvoie le nombre d'ordres mis à jour. Les ordres dont le cours est introuvable sont conservés.
+    /// </summary>
+    public async Task<int> UpdateOrderPricesFromDateAsync(CancellationToken ct = default)
+    {
+        using var db = _dbFactory.CreateDbContext();
+        var transactions = db.Transactions.Include(t => t.Asset).ToList();
+
+        int updated = 0;
+        foreach (var tx in transactions)
+        {
+            if (tx.Asset is null || string.IsNullOrWhiteSpace(tx.Asset.Ticker)) continue;
+            var price = await _prices.GetHistoricalCloseAsync(tx.Asset.Ticker, tx.Date, ct);
+            if (price is > 0)
+            {
+                tx.Price = price.Value;
+                updated++;
+            }
+        }
+        if (updated > 0) db.SaveChanges();
+        return updated;
+    }
+
     /// <summary>
     /// Récupère les prix live Yahoo et met à jour LastPrice. Renvoie le nombre d'actifs mis à jour.
     /// En cas d'échec (réseau coupé), les prix manuels existants sont conservés.
